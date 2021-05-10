@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { AppRouter } from './router/AppRouter';
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <h1>React tour of Heroes</h1>
+    <AppRouter/>
   </React.StrictMode>,
   document.getElementById('root')
 );
