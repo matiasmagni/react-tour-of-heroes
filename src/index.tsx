@@ -2,15 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { AppRouter } from './router/AppRouter';
-
+import AppRouter from './router/AppRouter';
 
 ReactDOM.render(
   <React.StrictMode>
     <h1>React tour of Heroes</h1>
-    <AppRouter/>
+    <AppRouter />
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 // If you want to start measuring performance in your app, pass a function

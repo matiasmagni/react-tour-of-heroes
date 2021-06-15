@@ -1,3 +1,3 @@
 export interface IRouteParams {
-    id: string;
+  id: string;
 }

@@ -1,0 +1,70 @@
+module.exports = {
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'prettier',
+    'plugin:react/recommended',
+    'plugin:prettier/recommended',
+    'airbnb',
+    'plugin:import/typescript',
+  ],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+      tsx: true,
+    },
+    ecmaVersion: 12,
+    sourceType: 'module',
+  },
+  plugins: [
+    'prettier',
+    'react',
+    '@typescript-eslint',
+    'simple-import-sort',
+    'import',
+  ],
+  rules: {
+    'no-console': 0,
+    'no-alert': 0,
+    'implicit-arrow-linebreak': 0,
+    'import/extensions': 'off',
+    'react/jsx-filename-extension': [
+      2,
+      { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+    ],
+    'react/jsx-one-expression-per-line': 0,
+    'no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': ['error'],
+    'import/newline-after-import': 'error',
+    'import/no-duplicates': 'error',
+    'sort-imports': [
+      'error',
+      {
+        ignoreCase: true,
+        ignoreDeclarationSort: true,
+        ignoreMemberSort: false,
+        allowSeparatedGroups: false,
+      },
+    ],
+    'object-curly-newline': 0,
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        printWidth: 80,
+        proseWrap: 'always',
+        tabWidth: 2,
+        requireConfig: false,
+        useTabs: false,
+        trailingComma: 'all',
+        bracketSpacing: true,
+        jsxBracketSameLine: false,
+        semi: true,
+      },
+    ],
+  },
+};

@@ -1,79 +1,86 @@
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams, withRouter } from 'react-router';
+import axios, { AxiosResponse } from 'axios';
+import { IHero } from '../../types/hero';
+import { IRouteParams } from '../../types/routeParams';
 import './hero-detail.css';
 
-import { useEffect, useState } from 'react';
-import { useHistory, useParams, withRouter } from 'react-router';
-import { IHero } from '../../types/hero';
-import { helpHttp } from '../../helpers/helpHttp';
-import { IRouteParams } from '../../types/routeParams';
-
 const HeroDetail = () => {
-    // useParams devuelve los parametros que se pasan por URL
-    const { id } = useParams<IRouteParams>();
-    const [hero, setHero] = useState<IHero[]>([]);
-    const [inputValue, setInputValue] = useState<string>('')
-    const history = useHistory();
+  // useParams devuelve los parametros que se pasan por URL
+  const { id } = useParams<IRouteParams>();
+  const [hero, setHero] = useState<IHero>();
+  const [inputValue, setInputValue] = useState<string>('');
+  const history = useHistory();
+  const url = `http://localhost:5000/hero?id=${id}`;
 
-    let api = helpHttp();
-    let url = `http://localhost:5000/hero?id=${id}`;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValue(e.target.value);
-    }
+  const save = async () => {
+    const endpoint = `http://localhost:5000/hero/${id}`;
 
-    const save = (): void => {
-        let endpoint = `http://localhost:5000/hero/${id}`;
-        let idNumber = Number(id);
-        const data = {
-            id: idNumber,
-            name: inputValue,
-        }
-        let options = {
-            body: data,
-            headers: { "content-type": "application/json" },
-        };
-        api.put(endpoint, options).then((res) => {
-            if (!res.err) {
-                let newData = hero.map((h) => (h.id === data.id ? data : h));
-                setHero(newData);
-            } else {
-                console.log('error')
-            }
-        });
+    const data = {
+      id: Number(id),
+      name: inputValue,
     };
 
-    useEffect(() => {
-        api.get(url).then(res => {
-            if (!res.err) {
-                setHero(res)
-            } else {
-                setHero([]);
-            }
-        })
-    }, [])
+    try {
+      await axios.put(endpoint, data);
+      setHero(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    return (
+  useEffect(() => {
+    const fetchData = async () => {
+      let res: AxiosResponse<any> | any = null;
+
+      try {
+        res = await axios.get(url);
+      } catch (error) {
+        console.log(error, res);
+      }
+
+      setHero(res.data[0]);
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <>
+      {hero && (
         <>
-            { hero &&
-                <>
-                    {hero.map(hero => (
-                        <>
-                            <h2>{hero.name} Details</h2>
-                            <div><span>id: </span>{hero.id}</div>
-                            <div>
-                                <label>Hero name: </label>
-                                <input type="text" value={inputValue} onChange={handleInputChange} placeholder="Hero name" />
-                            </div>
-                            <button onClick={() => history.push('/dashboard')}>go back</button>
-                            <button onClick={save}>save</button>
-                        </>
-                    ))}
-                </>
-            }
+          <h2>{hero.name} Details</h2>
+          <div>
+            <span>id: </span>
+            {hero.id}
+          </div>
+          <div>
+            <label htmlFor="heroInput">
+              Hero name:
+              <input
+                id="heroInput"
+                name="heroInput"
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder="Hero name"
+              />
+            </label>
+          </div>
+          <button type="button" onClick={() => history.push('/dashboard')}>
+            go back
+          </button>
+          <button type="submit" onClick={save}>
+            save
+          </button>
         </>
+      )}
+    </>
+  );
+};
 
-    );
-}
-
-export default withRouter(HeroDetail)
-
-
+export default withRouter(HeroDetail);

@@ -1,107 +1,107 @@
-import React, { useState } from 'react'
-import { IHero } from '../../types/hero';
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
 import { Link } from 'react-router-dom';
-import { helpHttp } from '../../helpers/helpHttp';
-import { useEffect } from 'react';
+import { IHero } from '../../types/hero';
 import './heroes.css';
 
+const url = 'http://localhost:5000/hero';
+
 const Heroes = () => {
+  const [heroes, setHeroes] = useState<IHero[]>([]);
+  const [inputNameValue, setInputNameValue] = useState<string>('');
 
-    const [heroes, setHeroes] = useState<IHero[]>([])
-    const [inputNameValue, setInputNameValue] = useState<string>()
-
-    let api = helpHttp();
-    let url = 'http://localhost:5000/hero';
-
-    useEffect(() => {
-        api.get(url).then(res => {
-            if (!res.err) {
-                setHeroes(res)
-            } else {
-                setHeroes([]);
-            }
-        })
-    }, [])
-
-    const add = (): void => {
-
-        const data = {
-            id: Math.round(Math.random() * (100 - 1) + 1),
-            name: inputNameValue
-        }
-
-        let options = {
-            body: data,
-            headers: { "content-type": "application/json" },
-        };
-
-        api.post(url, options).then((res) => {
-            if (!res.err) {
-                setHeroes([...heroes, res]);
-            } else {
-                console.log('error');
-            }
-        });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(url);
+        setHeroes(res.data);
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    const del = (id: number): void => {
-        let isDelete = window.confirm(
-            `¿Che chango vas a eliminar el heroe con el id '${id}'?`
-        );
+    fetchData();
+  }, []);
 
-        if (isDelete) {
-            let endpoint = `${url}/${id}`;
-            let options = {
-                headers: { "content-type": "application/json" },
-            };
+  const add = async () => {
+    let res: AxiosResponse<any> | any = null;
 
-            api.del(endpoint, options).then((res) => {
-                if (!res.err) {
-                    let newData = heroes.filter(h => h.id !== id);
-                    setHeroes(newData);
-                } else {
-                    console.log('error');
-                }
-            });
-        } else {
-            return;
-        }
+    const data: IHero = {
+      id: Math.round(Math.random() * (100 - 1) + 1),
+      name: inputNameValue,
     };
 
-    const handleInputNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setInputNameValue(e.target.value);
+    try {
+      res = await axios.post(url, data);
+      setHeroes([...heroes, res.data]);
+    } catch (error) {
+      console.error(error, res.data);
     }
+  };
 
-    return (
-        <>
-            <h2>My Heroes</h2>
+  const del = async (id: number) => {
+    let res: AxiosResponse<any> | any = null;
 
-            <div>
-                <label>Hero name: </label>
-                <input onChange={handleInputNameChange} value={inputNameValue} placeholder="Hero name" />
+    const isDelete = window.confirm(
+      `¿Che chango vas a eliminar el heroe con el id '${id}'?`,
+    );
 
-                <button className="add-button" onClick={add}>
-                    Add hero
-  </button>
-            </div>
+    if (isDelete) {
+      const endpoint = `${url}/${id}`;
 
-            {heroes.map(hero => (
-                <>
-                    <ul className="heroes">
-                        <li>
-                            <Link to={`/hero-detail/${hero.id}`}>
-                                <span className="badge">{hero.id}</span> {hero.name}
-                            </Link>
-                            <button className="delete" title="delete hero" onClick={() => del(hero.id)}>x</button>
-                        </li>
-                    </ul >
+      try {
+        res = await axios.delete(endpoint);
+        const newData = heroes.filter((h) => h.id !== id);
+        setHeroes(newData);
+      } catch (error) {
+        console.error(error, res.data);
+      }
+    }
+  };
 
-                </>
-            ))}
-        </>
-    )
-}
+  const handleInputNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setInputNameValue(event.target.value);
+  };
 
-export default Heroes
+  return (
+    <>
+      <h2>My Heroes</h2>
+      <div>
+        <label htmlFor="name">
+          Hero name:
+          <input
+            id="name"
+            name="name"
+            onChange={handleInputNameChange}
+            value={inputNameValue}
+            placeholder="Hero name"
+          />
+        </label>
+        <button type="button" className="add-button" onClick={add}>
+          Add hero
+        </button>
+      </div>
+      {heroes.map((hero: IHero) => (
+        <ul key={`myhero-${hero.id}`} className="heroes">
+          <li>
+            <Link to={`/hero-detail/${hero.id}`}>
+              <span className="badge">{hero.id}</span> {hero.name}
+            </Link>
+            <button
+              type="button"
+              className="delete"
+              title="delete hero"
+              onClick={() => del(hero.id)}
+            >
+              x
+            </button>
+          </li>
+        </ul>
+      ))}
+    </>
+  );
+};
 
-
+export default Heroes;

@@ -1,61 +1,56 @@
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './hero-search.css';
-import { useEffect, useState } from 'react';
 import { IHero } from '../../types/hero';
-import { helpHttp } from '../../helpers/helpHttp';
+import './hero-search.css';
 
-const HeroSearch = () => {
+const HeroSearch = ({ heroesList }: { heroesList: IHero[] }) => {
+  const [heroes, setHeroes] = useState<IHero[]>(heroesList);
+  const [heroesMock, setHeroesMock] = useState<IHero[]>([]);
+  const [inputValue, setInputValue] = useState<string>();
 
-    const [heroes, setHeroes] = useState<IHero[]>([]);
-    const [heroesMock, setHeroesMock] = useState<IHero[]>([])
-    const [inputValue, setInputValue] = useState<string>();
+  useEffect(() => setHeroes(heroesList), [heroesList]);
 
-    let api = helpHttp();
-    let url = 'http://localhost:5000/hero';
-
-    useEffect(() => {
-        api.get(url).then(res => {
-            if (!res.err) {
-                setHeroes(res)
-            } else {
-                setHeroes([]);
-            }
-        })
-    });
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setInputValue(e.target.value);
-        if (inputValue) filterHeroes(inputValue)
+  const filterHeroes = (query: string = ''): void => {
+    if (query) {
+      setHeroesMock(
+        heroes.filter(
+          (h: IHero) =>
+            h.name && h.name.toLowerCase().indexOf(query!.toLowerCase()) > -1,
+        ),
+      );
+    } else {
+      setHeroesMock(heroes);
     }
+  };
 
-    const filterHeroes = (query: string = ''): void => {
-        if (query) {
-            setHeroesMock(heroes.filter(h =>
-                h.name &&
-                h.name.toLowerCase().indexOf(query!.toLowerCase()) > -1
-            ));
-        } else {
-            setHeroesMock(heroes);
-        }
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setInputValue(e.target.value);
+    if (inputValue) filterHeroes(inputValue);
+  };
 
-    return (
-        <>
-            <label>Hero Search</label>
-            <input type="text" value={inputValue} onChange={handleInputChange} placeholder="Hero name" />
-            {heroesMock.map(hero => (
-                <ul className="search-result">
-                    <li>
-                        <Link to={`/hero-detail/${hero.id}`}>
-                            {hero.name}
-                        </Link>
-                    </li>
-                </ul>
+  return (
+    <>
+      <label htmlFor="search">
+        Hero Search:
+        <input
+          id="search"
+          name="search"
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder="Hero name"
+        />
+      </label>
 
-            ))}
+      {heroesMock.map((hero: IHero) => (
+        <ul className="search-result">
+          <li>
+            <Link to={`/hero-detail/${hero.id}`}>{hero.name}</Link>
+          </li>
+        </ul>
+      ))}
+    </>
+  );
+};
 
-        </>
-    )
-}
-
-export default HeroSearch
+export default HeroSearch;

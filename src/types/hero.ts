@@ -1,4 +1,4 @@
 export interface IHero {
-    id: number;
-    name: string | undefined;
+  id: number;
+  name: string | undefined;
 }
