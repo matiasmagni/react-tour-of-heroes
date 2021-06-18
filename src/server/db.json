@@ -25,16 +25,20 @@
       "name": "Dynama"
     },
     {
-      "id": 18,
-      "name": "Dr IQ"
-    },
-    {
       "id": 19,
       "name": "Magma"
     },
     {
       "id": 20,
       "name": "Tornado"
+    },
+    {
+      "id": 2,
+      "name": "Dr IQ"
+    },
+    {
+      "id": 47,
+      "name": "Iron Man"
     }
   ]
 }

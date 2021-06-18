@@ -6,10 +6,10 @@ import {
   Switch,
 } from 'react-router-dom';
 
-import Dashboard from '../components/dashboard/dashboard';
-import HeroDetail from '../components/hero-detail/hero-detail';
-import HeroSearch from '../components/hero-search/hero-search';
-import Heroes from '../components/heroes/heroes';
+import Dashboard from '../components/Dashboard/Dashboard';
+import HeroDetail from '../components/HeroDetail/HeroDetail';
+import HeroSearch from '../components/HeroSearch/HeroSearch';
+import Heroes from '../components/Heroes/Heroes';
 
 const AppRouter = () => (
   <Router>
@@ -28,7 +28,7 @@ const AppRouter = () => (
     <Switch>
       <Route exact path="/dashboard" component={Dashboard} />
       <Route exact path="/heroes" component={Heroes} />
-      <Route exact path="/hero-detail/:id" component={HeroDetail} />
+      <Route exact path="/hero-detail/:heroId" component={HeroDetail} />
       <Route exact path="/hero-search" component={HeroSearch} />
     </Switch>
   </Router>

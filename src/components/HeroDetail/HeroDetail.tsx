@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams, withRouter } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
 import { IHero } from '../../types/hero';
 import { IRouteParams } from '../../types/routeParams';
-import './hero-detail.css';
+import config from '../../config.json';
+import './HeroDetail.css';
 
 const HeroDetail = () => {
   // useParams devuelve los parametros que se pasan por URL
-  const { id } = useParams<IRouteParams>();
+  const { heroId }: IRouteParams = useParams();
   const [hero, setHero] = useState<IHero>();
   const [inputValue, setInputValue] = useState<string>('');
   const history = useHistory();
-  const url = `http://localhost:5000/hero?id=${id}`;
+  const url = `${config.API_URL.heroes}?id=${heroId}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
   const save = async () => {
-    const endpoint = `http://localhost:5000/hero/${id}`;
+    const endpoint = `${config.API_URL.heroes}/${heroId}`;
 
     const data = {
-      id: Number(id),
+      id: Number(heroId),
       name: inputValue,
     };
 
@@ -39,11 +40,10 @@ const HeroDetail = () => {
 
       try {
         res = await axios.get(url);
+        if (res) setHero(res.data[0]);
       } catch (error) {
         console.log(error, res);
       }
-
-      setHero(res.data[0]);
     };
 
     fetchData();
@@ -83,4 +83,4 @@ const HeroDetail = () => {
   );
 };
 
-export default withRouter(HeroDetail);
+export default HeroDetail;

@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import { Link } from 'react-router-dom';
 import { IHero } from '../../types/hero';
-import './heroes.css';
-
-const url = 'http://localhost:5000/hero';
+import config from '../../config.json';
+import './Heroes.css';
 
 const Heroes = () => {
   const [heroes, setHeroes] = useState<IHero[]>([]);
@@ -13,7 +12,7 @@ const Heroes = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(url);
+        const res = await axios.get(config.API_URL.heroes);
         setHeroes(res.data);
       } catch (error) {
         console.error(error);
@@ -32,7 +31,7 @@ const Heroes = () => {
     };
 
     try {
-      res = await axios.post(url, data);
+      res = await axios.post(config.API_URL.heroes, data);
       setHeroes([...heroes, res.data]);
     } catch (error) {
       console.error(error, res.data);
@@ -47,7 +46,7 @@ const Heroes = () => {
     );
 
     if (isDelete) {
-      const endpoint = `${url}/${id}`;
+      const endpoint = `${config.API_URL.heroes}/${id}`;
 
       try {
         res = await axios.delete(endpoint);

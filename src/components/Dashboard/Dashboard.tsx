@@ -2,17 +2,16 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { IHero } from '../../types/hero';
-import HeroSearch from '../hero-search/hero-search';
-import './dashboard.css';
-
-const url = 'http://localhost:5000/hero';
+import HeroSearch from '../HeroSearch/HeroSearch';
+import config from '../../config.json';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const [heroes, setHeroes] = useState<IHero[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get(url);
+      const res = await axios.get(config.API_URL.heroes);
       setHeroes(res.data);
     };
 

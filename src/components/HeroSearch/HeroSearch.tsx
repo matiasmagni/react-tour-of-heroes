@@ -1,30 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IHero } from '../../types/hero';
-import './hero-search.css';
+import { heroesFilter } from '../../utils/filters';
+import './HeroSearch.css';
 
 const HeroSearch = ({ heroesList }: { heroesList: IHero[] }) => {
   const [heroes, setHeroes] = useState<IHero[]>(heroesList);
   const [heroesMock, setHeroesMock] = useState<IHero[]>([]);
-  const [inputValue, setInputValue] = useState<string>();
+  const [inputValue, setInputValue] = useState<string>('');
 
   useEffect(() => setHeroes(heroesList), [heroesList]);
 
   const filterHeroes = (query: string = ''): void => {
     if (query) {
-      setHeroesMock(
-        heroes.filter(
-          (h: IHero) =>
-            h.name && h.name.toLowerCase().indexOf(query!.toLowerCase()) > -1,
-        ),
-      );
+      setHeroesMock(heroes.filter((h: IHero) => heroesFilter(h, query)));
     } else {
       setHeroesMock(heroes);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setInputValue(e.target.value);
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setInputValue(event.target.value);
     if (inputValue) filterHeroes(inputValue);
   };
 
@@ -43,7 +39,7 @@ const HeroSearch = ({ heroesList }: { heroesList: IHero[] }) => {
       </label>
 
       {heroesMock.map((hero: IHero) => (
-        <ul className="search-result">
+        <ul key={`search-item-${hero.id}`} className="search-result">
           <li>
             <Link to={`/hero-detail/${hero.id}`}>{hero.name}</Link>
           </li>
